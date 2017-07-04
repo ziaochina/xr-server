@@ -37,8 +37,8 @@ exports.login.auth = false;
  * @param  {[type]} data [description]
  * @return {[type]}      [description]
  */
-exports.logout = (data) => {
-	return service.logout(data)
+exports.logout = (data, ctx) => {
+	return service.logout(data, ctx)
 }
 
 /**

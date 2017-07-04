@@ -5,8 +5,8 @@
 const Hapi = require('hapi');
 
 const cfg = require('./config');
-const initMethodName = cfg.api && cfg.api.initMethodName || '_init';
-const rootPath = cfg.api && cfg.api.rootPath || '/v1';
+const initMethodName = cfg.service && cfg.service.initMethodName || '_init';
+const rootPath = cfg.web && cfg.web.rootPath || '/v1';
 const remote = require('./remote');
 const utils = require('./utils');
 const apis = require('./api');
@@ -28,7 +28,7 @@ providers = Object.assign(
 utils.injector(consumer, providers, initMethodName);
 
 //绑定本地API的URL路径
-let routes = utils.router(rootPath, apis, cfg.api, utils.auth, f => providers.db.transaction(f)) ;
+let routes = utils.router(rootPath, apis, cfg.service, utils.auth, f => providers.db.transaction(f)) ;
 
 //创建并启动Web服务进程
 const webServer = new Hapi.Server();

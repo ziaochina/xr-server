@@ -32,7 +32,10 @@ const restApiProxy = (fun, serverUrl) => {
     args.unshift((url, data)=>{
       let headers = {}
       let ctx = args[args.length-1];
-      if(ctx && ctx.request && ctx.request.headers.token){
+      if(ctx && ctx.res && ctx.res.token){
+        headers.token = ctx.res.token;
+      }
+      else if(ctx && ctx.request && ctx.request.headers.token){
         headers.token = ctx.request.headers.token;
       }
       return rp({

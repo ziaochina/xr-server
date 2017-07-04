@@ -40,56 +40,67 @@ function wrapper(request, reply, cfg, auth, transaction, handler){
     promise = transaction; //自动事务
   }
   let data = request.payload || request.url.query
-  promise(() => handler(data, ctx))
-  .then(value => {
-    if(value !== undefined){
-      ctx.return(value);
-    }
-  })
-  .catch(ctx.error);
+  try {
+    promise((f) => handler(data, ctx))
+    .then(value => {
+      if(value !== undefined){
+        ctx.return(value);
+      }
+    })
+    .catch((e)=>{
+      return ctx.error(e);
+    });
+  } catch (e) {
+    ctx.error(e);
+  } finally {
+
+  }
+
 }
 
 function context(request, reply, auth){
-  let res = {};
-  let ctx = this; 
-  Object.assign(ctx,
+  return Object.assign(
   {
     request,
-    return: (value) => {
-      res.result = true;
-      res.value = value;
-      reply(res);
-    },
-    error: (error) => {
-      res.result = false;
-      res.error = error;
-      reply(res);
-    },
-    token: (json, authType) => {
-      authType = authType || "base"
-      if(json === undefined){
-        return ctx.tokenInHeader;
-      }else{
-        res.token = auth && auth[authType].getToken(json) || json;
-      }
-      return this;
-    },
-    reply: reply,
-    validate: (handler) =>{
-      if(!request.headers.token && handler.auth !== false){
-        ctx.error("未登录");
-        return false;
-      }else{
-        let authType = handler.auth || "base";
-        try{
-          ctx.tokenInHeader = auth && auth[authType].getJson(request.headers.token || "");
-        }catch(ex){
-          ctx.error("未登录");
-        }
-        return true;
-      }
-    }
-  });
+    reply,
+    auth,
+    res: {},
+  },
+  contextFun);
+}
 
-  return this;
+const contextFun = {
+  return: function (value) {
+    this.res.result = true;
+    this.res.value = value;
+    this.reply(this.res);
+  },
+  error: function(error) {
+    this.res.result = false;
+    this.res.error = error;
+    this.reply(this.res);
+  },
+  token: function(json, authType) {
+    authType = authType || "base"
+    if(json === undefined){
+      return this.tokenInHeader;
+    }else{
+      this.res.token = this.auth && this.auth[authType].getToken(json) || json;
+    }
+    return this;
+  },
+  validate: function(handler) {
+    if(!this.request.headers.token && handler.auth !== false){
+      this.error("未登录");
+      return false;
+    }else{
+      let authType = handler.auth || "base";
+      try{
+        this.tokenInHeader = this.auth && this.auth[authType].getJson(this.request.headers.token || "");
+      }catch(ex){
+        this.error("未登录");
+      }
+      return true;
+    }
+  }
 }
