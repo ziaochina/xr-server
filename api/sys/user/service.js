@@ -1,9 +1,13 @@
 //service只有业务逻辑代码，没有操作数据库的实现代码，通过_init的依赖其它api。
 const dao = require('./dao')
+const java = require('js-to-java');
 
 let api = {
   org: true,
-  web: true,
+  rest: {
+    web: true,
+  },
+  dubbo: true,
   utils: true,
   cfg: true,
 }
@@ -13,8 +17,17 @@ exports._init = (inject) => {
 }
 
 exports.ping = (dto, ctx) => {
-  ctx.token([2078997663385600,null,null,null]);
-  return api.web.orginit(dto, ctx);
+  try {
+    // console.log(api.dubbo.app)
+  return api.dubbo.ILoginService.Ping(java.String("ping"))
+    .then(data=>ctx.return(data))
+  } catch (e) {
+    console.log(e)
+  } finally {
+
+  }
+  // ctx.token([2078997663385600,null,null,null]);
+  // return api.rest.web.orginit(dto, ctx);
 }
 
 exports.log = (arr, ctx) => {

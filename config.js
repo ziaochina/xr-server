@@ -10,6 +10,14 @@ module.exports = {
     "transactionType": "auto",
   },
   rpc: {
+    dubbo:{
+      "application": {
+        "name": "fxxk"
+      },
+      "register": "192.168.1.209:2181",
+      "dubboVer": "2.8.4a",
+      "dependencies": {}
+    },
     rest: {
       "serverUrl": "http://dev.rrtimes.com:8088",
     },

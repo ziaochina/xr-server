@@ -1,27 +1,25 @@
 'use strict';
-//TODO: auth(token), build, appLoad, rpc-dubbo
-//DONE: webserver, service struct, injector, db, transition, rpc-rest, auth
-
+//TODO: build, appLoad, rpc-dubbo
+//DONE: webserver, service struct, injector, db, transition, rpc-rest, auth(token),
 const Hapi = require('hapi');
-
-const cfg = require('./config');
-const initMethodName = cfg.service && cfg.service.initMethodName || '_init';
-const rootPath = cfg.web && cfg.web.rootPath || '/v1';
+const config = require('./config');
 const remote = require('./remote');
 const utils = require('./utils');
 const apis = require('./api');
-let consumer =  apis;
-let providers = apis;
 
-//服务提供者
-providers = Object.assign(
+const cfg = utils.env(config);
+const initMethodName = cfg.service && cfg.service.initMethodName || '_init';
+const rootPath = cfg.web && cfg.web.rootPath || '/v1';
+const consumer =  apis;
+const localproviders = apis;
+const providers = Object.assign( //服务提供者
   {
     cfg: cfg,
     utils: utils,
     db: utils.orm(cfg.db),//ORM 持久化组件
   },
   utils.rpc(remote, cfg.rpc), //RPC 远程的服务提供者
-  providers //本地的服务提供者
+  localproviders //本地的服务提供者
 );
 
 //注入服务提供者

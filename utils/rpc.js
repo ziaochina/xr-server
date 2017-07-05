@@ -1,10 +1,11 @@
 const rp = require('request-promise');
+const nzd = require('node-zookeeper-dubbo');
 
-exports.rpc = (remote, rpccfg) => {
-  let proviers = Object.assign({},
-    restWrapper(remote.rest, rpccfg && rpccfg.rest),
-    dubboWrapper(remote.dubbo, rpccfg && rpccfg.dubbo)
-  )
+exports.rpc = (remote, cfg) => {
+  let proviers = {
+    rest: restWrapper(remote.rest, cfg && cfg.rest),
+    dubbo: dubboWrapper(remote.dubbo, cfg && cfg.dubbo),
+  }
   return proviers
 }
 
@@ -50,6 +51,9 @@ const restApiProxy = (fun, serverUrl) => {
   }
 }
 
-const dubboWrapper = (apis) => {
-
+const dubboWrapper = (apis, cfg) => {
+  let opt = Object.assign({}, cfg);
+  opt.dependencies = apis;
+  let dubbo = new nzd(opt);
+  return dubbo;
 }
