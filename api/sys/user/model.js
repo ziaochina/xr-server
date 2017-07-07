@@ -1,12 +1,13 @@
 //数据库模型的定义，在DAO文件中使用。
 const Sequelize = require("sequelize")
 
-let sequelize = null;
+let api = {
+  db: true,
+}
 exports._init = (inject) =>{
-  sequelize = inject({db: true}).db;
-
-  exports.User = sequelize.define('user', cfg.user, cfg.user_config);
-  exports.Log = sequelize.define('log', cfg.log, cfg.log_config);
+  inject(api);
+  exports.User = api.db.define('user', cfg.user, cfg.user_config);
+  exports.Log = api.db.define('log', cfg.log, cfg.log_config);
 }
 
 let cfg = {

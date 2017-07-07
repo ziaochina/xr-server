@@ -3,13 +3,14 @@
 const models = require('./model')
 const mapper = require('./mapper')
 
-let sequelize = null;
+let api = {
+  db: true,
+}
 let User = null;
 let Log = null;
 
 exports._init = (inject) => {
-  inject(models);
-  sequelize = inject({db: true}).db;
+  inject([models, api]);
   User = models.User;
   Log = models.Log;
 }
@@ -26,4 +27,4 @@ exports.findByEmail = (email)=>{
     return User.findOne({ where: {email: email} })
 }
 
-exports.countByAppId = () => sequelize.query(mapper.countByAppId,{type: sequelize.QueryTypes.SELECT});
+exports.countByAppId = () => api.db.query(mapper.countByAppId,{type: sequelize.QueryTypes.SELECT});
