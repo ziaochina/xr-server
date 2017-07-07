@@ -1,5 +1,6 @@
 const rp = require('request-promise');
 const nzd = require('node-zookeeper-dubbo');
+const java = require('js-to-java');
 
 exports.rpc = (remote, cfg) => {
   let proviers = {
@@ -52,8 +53,9 @@ const restApiProxy = (fun, serverUrl) => {
 }
 
 const dubboWrapper = (apis, cfg) => {
-  let opt = Object.assign({}, cfg);
-  opt.dependencies = apis;
-  let dubbo = new nzd(opt);
-  return dubbo;
+  let opt = Object.assign({}, cfg, {
+    java: java,
+    dependencies : apis,
+  }); 
+  return new nzd(opt);
 }

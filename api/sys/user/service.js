@@ -1,6 +1,5 @@
 //service只有业务逻辑代码，没有操作数据库的实现代码，通过_init的依赖其它api。
 const dao = require('./dao')
-const java = require('js-to-java');
 
 let api = {
   org: true,
@@ -19,7 +18,7 @@ exports._init = (inject) => {
 exports.ping = (dto, ctx) => {
   try {
     // console.log(api.dubbo.app)
-  return api.dubbo.ILoginService.Ping(java.String("ping"))
+  return api.dubbo.IAppService.queryById(1000)
     .then(data=>ctx.return(data))
   } catch (e) {
     console.log(e)

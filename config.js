@@ -12,11 +12,12 @@ module.exports = {
   rpc: {
     dubbo:{
       "application": {
-        "name": "fxxk"
+        "name": "xr-service"
       },
       "register": "192.168.1.209:2181",
       "dubboVer": "2.8.4a",
-      "dependencies": {}
+      "group": 'LISGA-PC',
+      "timeout": 6000,
     },
     rest: {
       "serverUrl": "http://dev.rrtimes.com:8088",

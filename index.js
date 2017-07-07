@@ -1,6 +1,6 @@
 'use strict';
-//TODO: build, appLoad, rpc-dubbo
-//DONE: webserver, service struct, injector, db, transition, rpc-rest, auth(token),
+//TODO: build, appLoad
+//DONE: webserver, service struct, injector, db, transition, rpc-rest, rpc-dubbo, auth(token),
 const Hapi = require('hapi');
 const config = require('./config');
 const remote = require('./remote');

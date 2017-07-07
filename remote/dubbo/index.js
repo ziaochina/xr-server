@@ -1,7 +1,7 @@
-const app = require('./app.js')
+const IAppService = require('./IAppService.js')
 const ILoginService = require('./ILoginService.js')
 
 module.exports = {
-  app,
+  IAppService,
   ILoginService,
 }
