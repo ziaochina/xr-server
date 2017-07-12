@@ -15,4 +15,4 @@ nodejs开发人员，后台webapi开发人员
 $ cd example
 $ npm install
 $ npm start
-浏览器访问127.0.0.1:8000
+浏览器访问http://127.0.0.1:8000/v1/user/ping?i=helloworld

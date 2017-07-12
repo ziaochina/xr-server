@@ -17,6 +17,7 @@ exports._init = (inject) => {
 
 exports.ping = (dto, ctx) => {
   try {
+    return dto||true;
     // console.log(api.dubbo.app)
   return api.dubbo.IAppService.queryById(1000)
     .then(data=>ctx.return(data))
