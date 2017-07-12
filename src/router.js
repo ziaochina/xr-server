@@ -90,6 +90,7 @@ const contextFun = {
     return this;
   },
   validate: function(handler) {
+    if(!this.auth)return true;
     if(!this.request.headers.token && handler.auth !== false){
       this.error("未登录");
       return false;

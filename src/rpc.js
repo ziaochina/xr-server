@@ -56,6 +56,6 @@ const dubboWrapper = (apis, cfg) => {
   let opt = Object.assign({}, cfg, {
     java: java,
     dependencies : apis,
-  }); 
+  });
   return new nzd(opt);
 }

@@ -1,11 +1,8 @@
 //service只有业务逻辑代码，没有操作数据库的实现代码，通过_init的依赖其它api。
 const dao = require('./dao')
-const utils = require('../../../utils');
-const api = { 
-}
 
 exports._init = (inject) => {
-  inject([dao, api])
+  inject(dao);
 }
 
 exports.ping = (dto, ctx) => {
@@ -37,27 +34,12 @@ exports.create = (dto, ctx) => {
     parameter: 'ppppp',
   }
   return dao.create(dto)
-  .then(r=>dao.createOperate(optDto))
-  .then(r=>ctx.return(r))
+  .then(r => dao.createOperate(optDto))
+  .then(r => ctx.return(r))
 }
 
-exports.createOperate = (dto, ctx) => {
-  dto = {
-    id: 1000000002,
-    url: '/11111111111',
-    parameter: 'ppppp',
-  }
-  dao.createOperate(dto).then(r=>ctx.return(r));
-}
+exports.createOperate = (dto, ctx) => dao.createOperate(dto).then(r => ctx.return(r));
 
-exports.delete = (dto, ctx) => {
-  return api.org.ping("call from sys/user.");
-}
+exports.findById = ({id}, ctx) => dao.findById(id).then(d => ctx.return(d));
 
-exports.findById = (dto, ctx) => {
-  return api.org.ping("call from sys/user.");
-}
-
-exports.findByAll = (dto, ctx) => {
-  return api.org.ping("call from sys/user.");
-}
+exports.findAll = (where, ctx) => dao.findAll({where}).then(d => ctx.return(d));

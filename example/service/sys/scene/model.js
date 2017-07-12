@@ -1,7 +1,22 @@
 //数据库模型的定义，在DAO文件中使用。
 const Sequelize = require("sequelize")
 
-module.exports = {
+let api = {db: true};
+
+let Scene = null;
+let Operate = null;
+let Operates = null;
+
+exports._init = function(inject){
+  inject(api);
+
+  Scene = api.db.define('scene', cfg.scene, cfg.scene_config);
+  Operate = api.db.define('operate', cfg.operate, cfg.operate_config);
+  Operates = Scene.hasMany(Operate, {constraints: false});
+  Object.assign(exports, {Scene, Operate, Operates});
+}
+
+const cfg = {
   scene: {
     id: { type: Sequelize.BIGINT, primaryKey: true},
     orgId: Sequelize.BIGINT,
