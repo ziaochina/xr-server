@@ -22,7 +22,7 @@ module.exports = function(config, service, remote){
   var server = this;
   this.cfg = config;
   this.initMethodName = this.cfg.service && this.cfg.service.initMethodName || '_init';
-  this.rootPath = this.cfg.web && this.cfg.web.rootPath || '/v1';
+  this.apiRootUrl = this.cfg.web && this.cfg.web.apiRootUrl || '/v1';
   this.consumer =  service;
   this.remote = remote;
   this.localproviders = service;
@@ -40,7 +40,8 @@ module.exports = function(config, service, remote){
    utils.injector(this.consumer, this.providers, this.initMethodName);
 
    //绑定本地API的URL路径
-   let routes = utils.router(this.rootPath, this.consumer, this.cfg.service, utils.auth, f => this.providers.db.transaction(f)) ;
+   let routes = utils.router(this.apiRootUrl, this.consumer, this.cfg.service, utils.auth, f => this.providers.db.transaction(f)) ;
+
 
    //创建并启动Web服务进程
    this.webServer = new Hapi.Server();
@@ -48,6 +49,24 @@ module.exports = function(config, service, remote){
        host: this.cfg.web.host,
        port: this.cfg.web.port,
    });
+
+   //静态文件
+   if(this.cfg.web.website){
+     this.webServer.register(require('inert'), (err) => {
+         if (err) {
+             throw err;
+         }
+         this.webServer.route({
+            method: 'GET',
+            path: '/{param*}',
+            handler: {
+                directory: {
+                    path: this.cfg.web.website
+                }
+            }
+        });
+     });
+   }
 
    this.webServer.route(routes);
 

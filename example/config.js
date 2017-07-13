@@ -2,7 +2,8 @@ module.exports = {
   web: {
     "host": "localhost",
     "port": 8000,
-    "rootPath": "/v1",
+    "apiRootUrl": "/v1",
+    "website": "./www",
   },
   service: {
     "md5key": "yiJia9*",

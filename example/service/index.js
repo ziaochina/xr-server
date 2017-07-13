@@ -1,6 +1,6 @@
-const org   = require('./sys/org/api');
-const scene = require('./sys/scene/api');
-const user  = require('./sys/user/api');
+const org   = require('./org');
+const scene = require('./scene');
+const user  = require('./user');
 
 module.exports = {
   org,
