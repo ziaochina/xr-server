@@ -20,38 +20,56 @@ const utils = Object.assign({},
 
 module.exports = function(config, service, remote){
   var server = this;
-  this.cfg = config;
+  this.cfg = config || {};
   this.initMethodName = this.cfg.service && this.cfg.service.initMethodName || '_init';
-  this.apiRootUrl = this.cfg.web && this.cfg.web.apiRootUrl || '/v1';
-  this.consumer =  service;
+  this.apiRootUrl = this.cfg && this.cfg.apiRootUrl || '';
+  this.consumer =  service || {};
   this.remote = remote;
-  this.localproviders = service;
+  this.localproviders = service;//本地的服务提供者
+  this.rpc = this.remote && utils.rpc(this.remote, this.cfg.rpc);//RPC 远程的服务提供者
+  this.db = this.cfg.db && utils.orm(this.cfg.db);//ORM 持久化组件
+
   this.providers = Object.assign( //服务提供者
     {
       cfg: this.cfg,
+      db: this.db,
       utils: utils,
-      db: utils.orm(this.cfg.db),//ORM 持久化组件
     },
-    utils.rpc(this.remote, this.cfg.rpc), //RPC 远程的服务提供者
-    this.localproviders //本地的服务提供者
+    this.rpc,
+    this.localproviders
   );
+
+  if(!this.cfg.service || this.cfg.service.auth == false){ //不启用身份验证
+    this.auth = null;
+  }else{
+    this.auth = utils.auth;
+    if(this.cfg.service.authKey){
+      this.auth.setAuthKey(this.cfg.service.authKey);
+    }
+  }
+
+  if(!this.cfg.db || this.cfg.db.transactionType != "auto"){ //不启用数据库事务
+    this.transaction = null;
+  }else{
+    this.transaction = f => this.providers.db.transaction(f);
+  }
 
    //注入服务提供者
    utils.injector(this.consumer, this.providers, this.initMethodName);
 
    //绑定本地API的URL路径
-   let routes = utils.router(this.apiRootUrl, this.consumer, this.cfg.service, utils.auth, f => this.providers.db.transaction(f)) ;
+   let routes = utils.router(this.apiRootUrl, this.consumer, this.auth, this.transaction) ;
 
 
    //创建并启动Web服务进程
    this.webServer = new Hapi.Server();
    this.webServer.connection({
-       host: this.cfg.web.host,
-       port: this.cfg.web.port,
+       host: this.cfg.host,
+       port: this.cfg.port,
    });
 
    //静态文件
-   if(this.cfg.web.website){
+   if(this.cfg.website){
      this.webServer.register(require('inert'), (err) => {
          if (err) {
              throw err;
@@ -61,7 +79,7 @@ module.exports = function(config, service, remote){
             path: '/{param*}',
             handler: {
                 directory: {
-                    path: this.cfg.web.website
+                    path: this.cfg.website
                 }
             }
         });

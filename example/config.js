@@ -1,17 +1,18 @@
 module.exports = {
-  web: {
-    "host": "localhost",
-    "port": 8000,
-    "apiRootUrl": "/v1",
-    "website": "./www",
-  },
+  "host": "localhost",
+  "port": 8000,
+  "apiRootUrl": "/v1",
+  "website": "./www",
   service: {
+    "auth": true,
+    "authKey": "/login/token/Key",
     "md5key": "yiJia9*",
     "initMethodName": "_init",
     "transactionType": "auto",
   },
   rpc: {
     dubbo:{
+      "apiPrefix": "dubbo",
       "application": {
         "name": "xr-service"
       },
@@ -21,6 +22,7 @@ module.exports = {
       "timeout": 6000,
     },
     rest: {
+      "apiPrefix": "rest",
       "serverUrl": "http://dev.rrtimes.com:8088",
     },
   },

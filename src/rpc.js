@@ -3,14 +3,26 @@ const nzd = require('node-zookeeper-dubbo');
 const java = require('js-to-java');
 
 exports.rpc = (remote, cfg) => {
-  let proviers = {
-    rest: restWrapper(remote.rest, cfg && cfg.rest),
-    dubbo: dubboWrapper(remote.dubbo, cfg && cfg.dubbo),
+  let proviers = {};
+  let restPrefix = cfg && cfg.rest && cft.rest.apiPrefix ;
+  let dubboPrefix = cfg && cfg.dubbo && cft.dubbo.apiPrefix ;
+  let rest = restWrapper(remote.rest, cfg && cfg.rest);
+  let dubbo = dubboWrapper(remote.dubbo, cfg && cfg.dubbo);
+  if(restPrefix){
+    proviers[restPrefix] = rest;
+  }else{
+    proviers = Object.assign(providers, rest);
+  }
+  if(dubboPrefix){
+    proviers[dubboPrefix] = dubbo;
+  }else{
+    proviers = Object.assign(providers, dubbo);
   }
   return proviers
 }
 
 const restWrapper = (apis, restcfg, apiProxy, serverUrl) => {
+  if(!restcfg)return;
   apiProxy = apiProxy || {};
   serverUrl = serverUrl || restcfg && restcfg.serverUrl;
   for (let key in apis) {
@@ -53,6 +65,7 @@ const restApiProxy = (fun, serverUrl) => {
 }
 
 const dubboWrapper = (apis, cfg) => {
+  if(!cfg)return;
   let opt = Object.assign({}, cfg, {
     java: java,
     dependencies : apis,

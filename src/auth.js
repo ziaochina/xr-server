@@ -1,12 +1,15 @@
 const jwt = require('jsonwebtoken');
-// const base64 = require('js-base64').Base64;
-var apiKey = "rrtimes.com/login/token/Key";
-var secret = new Buffer(apiKey, 'base64');
+var authKey = "token/Key";
+var secret = new Buffer(authKey, 'base64');
 
 exports.auth = {
-  "none":{},
-  "base":new JsonToken(5 * 24 * 60 * 60), //5 days, seconds
-  "tmp":new JsonToken(3 * 60), //3 minus, seconds
+  setAuthKey: (key)=>{
+    authKey = key;
+    secret = new Buffer(authKey, 'base64');
+  },
+  "none": {},
+  "base": new JsonToken(5 * 24 * 60 * 60), //5 days, seconds
+  "tmp": new JsonToken(3 * 60), //3 minus, seconds
 }
 
 function JsonToken(exp){

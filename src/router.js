@@ -1,9 +1,7 @@
 
-exports.router = (path, api, cfg, auth, transaction, routes) =>{
-  return resolveApiPath(path, api, cfg, auth, transaction, routes)
-}
+exports.router = resolveApiPath;
 
-function resolveApiPath(path, api, cfg, auth, transaction, routes){
+function resolveApiPath(path, api, auth, transaction, routes){
   routes = routes || [];
   for (let key in api) {
     let method = api[key];
@@ -12,7 +10,7 @@ function resolveApiPath(path, api, cfg, auth, transaction, routes){
       continue;
     }
     else if (typeof method == "object"){
-      resolveApiPath(methodPath, method, cfg, auth, transaction, routes)
+      resolveApiPath(methodPath, method, auth, transaction, routes)
     }
     else if (typeof method == 'function'){
       //method.url = methodPath;
@@ -20,26 +18,23 @@ function resolveApiPath(path, api, cfg, auth, transaction, routes){
       routes.push({
           method: 'GET',
           path: methodPath,
-          handler: (request, reply) => wrapper(request, reply, cfg, auth, transaction, method)
+          handler: (request, reply) => wrapper(request, reply, auth, transaction, method)
       });
       routes.push({
           method: 'POST',
           path: methodPath,
-          handler: (request, reply) => wrapper(request, reply, cfg, auth, transaction, method)
+          handler: (request, reply) => wrapper(request, reply, auth, transaction, method)
       });
     }
   }
   return routes;
 }
 
-function wrapper(request, reply, cfg, auth, transaction, handler){
+function wrapper(request, reply, auth, transaction, handler){
   let ctx = context(request, reply, auth);
-  if(!ctx.validate(handler))return;
-  let promise = f => new Promise( resolve => resolve(f()));
-  if(cfg && cfg.transactionType == "auto"){
-    promise = transaction; //自动事务
-  }
-  let data = request.payload || request.url.query
+  if(!ctx.validate(handler)) return;
+  let promise = transaction || (f => new Promise(resolve => resolve(f())));
+  let data = request.payload || request.url.query;
   try {
     promise((f) => handler(data, ctx))
     .then(value => {
