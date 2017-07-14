@@ -4,8 +4,8 @@ const java = require('js-to-java');
 
 exports.rpc = (remote, cfg) => {
   let proviers = {};
-  let restPrefix = cfg && cfg.rest && cft.rest.apiPrefix ;
-  let dubboPrefix = cfg && cfg.dubbo && cft.dubbo.apiPrefix ;
+  let restPrefix = cfg && cfg.rest && cfg.rest.apiPrefix ;
+  let dubboPrefix = cfg && cfg.dubbo && cfg.dubbo.apiPrefix ;
   let rest = restWrapper(remote.rest, cfg && cfg.rest);
   let dubbo = dubboWrapper(remote.dubbo, cfg && cfg.dubbo);
   if(restPrefix){

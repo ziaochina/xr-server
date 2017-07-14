@@ -27,6 +27,16 @@ function resolveApiPath(path, api, auth, transaction, routes){
       });
     }
   }
+  routes.push({
+      method: 'GET',
+      path: path || "/",
+      handler: (request, reply) => {
+        reply(routes.filter(r => r.method=='POST')
+          .map(r => `<a href='${r.path}'>${r.path}</a>`)
+          .join('<br>')
+        )
+      }
+  });
   return routes;
 }
 
