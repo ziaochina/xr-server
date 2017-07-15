@@ -10,6 +10,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "xr-server": "^0.0.7"
+    "xr-server": "^0.0.8"
   }
 }
