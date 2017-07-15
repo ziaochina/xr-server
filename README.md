@@ -1,4 +1,4 @@
-# xr-service
+# xr-server
 
 ## 特点
 
